@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="CheckList Diário Abertura">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CheckList">
+    <title>CheckList Diário Abertura</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+    
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --primary-light: #e0e7ff;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --success-dark: #059669;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --whatsapp: #25D366;
+            --sms: #fbbf24;
+            --share: #0088cc;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --bg: #f9fafb;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.07);
+            --shadow-lg: 0 20px 50px rgba(0,0,0,0.15);
+            --radius: 16px;
+            --radius-sm: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 16px;
+            min-height: 100vh;
+            color: var(--text);
+        }
+        
+        .app-header {
+            text-align: center;
+            padding: 20px 0 16px;
+            color: white;
+        }
+        
+        .app-logo {
+            font-size: 52px;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+        
+        .subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .install-notice {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+            border: 2px solid var(--warning);
+            box-shadow: var(--shadow);
+        }
+        
+        .install-notice h3 {
+            color: #92400e;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .install-steps {
+            margin: 12px 0;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #78350f;
+        }
+        
+        .step-number {
+            background: var(--warning);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .step-text {
+            flex: 1;
+            line-height: 1.4;
+        }
+        
+        .os-tabs {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        
+        .os-tab {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--warning);
+            border-radius: var(--radius-sm);
+            background: white;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .os-tab.active {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .os-content {
+            display: none;
+        }
+        
+        .os-content.active {
+            display: block;
+        }
+        
+        .info-card {
+            background: linear-gradient(135deg, #f0f4ff, #e8f4ff);
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 18px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .datetime-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .field-group {
+            margin-bottom: 16px;
+        }
+        
+        .field-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        
+        .field-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .field-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+        }
+        
+        .checklist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            background: #f3f4f6;
+            border-radius: var(--radius-sm);
+        }
+        
+        .checklist-title { font-weight: 700; font-size: 14px; }
+        .checklist-count { 
+            font-size: 12px; 
+            color: var(--text-light); 
+            font-weight: 700;
+            background: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 6px;
+            margin: 12px 0 16px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--success-light));
+            border-radius: 6px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+        
+        .checklist-item {
+            background: var(--bg);
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .checklist-item:hover {
+            background: #f3f4f6;
+            transform: translateX(2px);
+        }
+        
+        .checklist-item.checked {
+            background: var(--success-light);
+            border-color: var(--success);
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+        
+        .checklist-item label {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .checklist-item input:checked + label {
+            text-decoration: line-through;
+            color: var(--success-dark);
+        }
+        
+        .button-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 24px;
+        }
+        
+        .btn {
+            padding: 13px 16px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn:active { transform: translateY(2px); }
+        .btn-save { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+        .btn-pdf { background: linear-gradient(135deg, var(--success), var(--success-dark)); color: white; }
+        .btn-share { background: linear-gradient(135deg, var(--share), #0066aa); color: white; }
+        .btn-whatsapp { background: linear-gradient(135deg, var(--whatsapp), var(--whatsapp-dark)); color: white; }
+        .btn-sms { background: linear-gradient(135deg, var(--sms), var(--sms-dark)); color: white; }
+        .btn-reset { background: linear-gradient(135deg, var(--danger), #dc2626); color: white; }
+        
+        .status-message {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            display: none;
+        }
+        
+        .status-message.success { background: var(--success-light); color: #065f46; display: block; border: 1px solid var(--success); }
+        .status-message.error { background: #fee2e2; color: #991b1b; display: block; border: 1px solid var(--danger); }
+        
+        @media print {
+            body { background: white; }
+            .install-notice, .button-section, .progress-bar { display: none; }
+            .container { box-shadow: none; padding: 10px; }
+        }
+        
+        @media (max-width: 480px) {
+            .container { padding: 18px; }
+            h1 { font-size: 22px; }
+            .app-logo { font-size: 42px; }
+            .datetime-grid { grid-template-columns: 1fr; }
+            .button-section { grid-template-columns: 1fr; }
+        }
+
+        .install-btn-pwa {
+            display: none;
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.4);
+            animation: pulse-green 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 4px 15px rgba(16,185,129,0.4); }
+            50% { box-shadow: 0 4px 25px rgba(16,185,129,0.7); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="app-logo">📋</div>
+        <h1>CheckList Diário Abertura</h1>
+        <div class="subtitle">Sistema de Verificação Diária</div>
+    </div>
+
+    <div class="container">
+        <button class="install-btn-pwa" id="installBtn">📲 Instalar App no Celular</button>
+        <div class="install-notice">
+            <h3>📲 Instalar na Tela Inicial</h3>
+            <div class="os-tabs">
+                <div class="os-tab active" onclick="showOS('android')">Android</div>
+                <div class="os-tab" onclick="showOS('ios')">iPhone/iOS</div>
+            </div>
+            
+            <div id="android-content" class="os-content active">
+                <div class="install-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Toque no menu <strong>⋮</strong> (três pontos) no canto superior direito</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Selecione <strong>"Adicionar à tela inicial"</strong> ou <strong>"Instalar app"</strong></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Confirme tocando em <strong>"Adicionar"</strong></div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">O ícone 📋 aparecerá na sua tela inicial como um app!</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="ios-content" class="install-steps os-content">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Toque no botão <strong>Compartilhar ⬆️</strong> (quadrado com seta) no Safari</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Role para baixo e toque em <strong>"Adicionar à Tela de Início"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Confirme o nome <strong>"CheckList"</strong> e toque em <strong>"Adicionar"</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">O ícone 📋 aparecerá na sua tela inicial!</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="datetime-grid">
+                <div class="field-group" style="margin-bottom: 0;">
+                    <label for="data">📅 Data:</label>
+                    <input type="date" id="data" required>
+                </div>
+                <div class="field-group" style="margin-bottom: 0;">
+                    <label for="hora">⏰ Hora:</label>
+                    <input type="time" id="hora" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <label for="responsavel">👤 Responsável:</label>
+            <input type="text" id="responsavel" placeholder="Nome do responsável" required>
+        </div>
+
+        <div class="checklist-section">
+            <div class="checklist-header">
+                <span class="checklist-title">Itens para verificação</span>
+                <span class="checklist-count" id="checkCount">0/12</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="checklist"></div>
+        </div>
+
+        <div class="button-section">
+            <button class="btn btn-save" onclick="salvarChecklist()">💾 Salvar</button>
+            <button class="btn btn-pdf" onclick="gerarPDF()">📄 PDF</button>
+            <button class="btn btn-share" onclick="compartilhar()">📤 Compartilhar</button>
+            <button class="btn btn-whatsapp" onclick="whatsapp()">💬 WhatsApp</button>
+            <button class="btn btn-sms" onclick="sms()">📱 SMS</button>
+            <button class="btn btn-reset" onclick="resetar()">🔄 Resetar</button>
+        </div>
+
+        <div class="status-message" id="statusMessage"></div>
+    </div>
+
+    <script>
+        function showOS(os) {
+            document.querySelectorAll('.os-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.os-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(os + '-content').classList.add('active');
+        }
+
+        const itensChecklist = [
+            { id: 'scol_lr', label: 'SCOL (Impressão de Logística Reversa - LR)' },
+            { id: 'scol_coa', label: 'SCOL (Impressão de Coleta Agendada - COA)' },
+            { id: 'sigma_lem', label: 'SIGMA (Impressão de LEM)' },
+            { id: 'sigma_lcm', label: 'SIGMA (Impressão de LCM)' },
+            { id: 'sigma_malotes', label: 'SIGMA (Baixa de Malotes CEF (Apenas Quinta-feira))' },
+            { id: 'coleta_interativa', label: 'COLETA INTERATIVA (Acompanhamento)' },
+            { id: 'telegramas', label: 'TELEGRAMAS (Acompanhamento)' },
+            { id: 'sedex12', label: 'SEDEX12 (Acompanhamento)' },
+            { id: 'fraldas', label: 'FRALDAS (Gestão de Prazos)' },
+            { id: 'lci_forms', label: 'LCI (Preenchimento de FORMs)' },
+            { id: 'sgpd_dados', label: 'SGPD (Validação de Dados)' },
+            { id: 'lcr_prazos', label: 'LCR (Gestão de Prazos)' }
+        ];
+
+        function inicializar() {
+            const container = document.getElementById('checklist');
+            itensChecklist.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'checklist-item';
+                div.innerHTML = `<input type="checkbox" id="${item.id}"><label for="${item.id}">${item.label}</label>`;
+                div.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT') {
+                        const cb = div.querySelector('input');
+                        cb.checked = !cb.checked;
+                        cb.dispatchEvent(new Event('change'));
+                    }
+                });
+                container.appendChild(div);
+            });
+
+            document.querySelectorAll('.checklist-item input').forEach(cb => {
+                cb.addEventListener('change', atualizarProgresso);
+            });
+
+            carregar();
+            atualizarDateTime();
+            atualizarProgresso();
+        }
+
+        function atualizarDateTime() {
+            const agora = new Date();
+            document.getElementById('data').value = agora.toISOString().split('T')[0];
+            document.getElementById('hora').value = agora.toTimeString().slice(0,5);
+        }
+
+        function atualizarProgresso() {
+            let count = 0;
+            itensChecklist.forEach(item => {
+                const cb = document.getElementById(item.id);
+                const div = cb.closest('.checklist-item');
+                if (cb.checked) {
+                    count++;
+                    div.classList.add('checked');
+                } else {
+                    div.classList.remove('checked');
+                }
+            });
+            document.getElementById('progressFill').style.width = (count / 12 * 100) + '%';
+            document.getElementById('checkCount').textContent = count + '/12';
+        }
+
+        function salvar() {
+            const resp = document.getElementById('responsavel').value.trim();
+            const data = document.getElementById('data').value;
+            const hora = document.getElementById('hora').value;
+            
+            if (!resp || !data || !hora) {
+                status('Preencha responsável, data e hora.', 'error');
+                return;
+            }
+
+            const dados = { resp, data, hora, itens: {} };
+            itensChecklist.forEach(item => {
+                dados.itens[item.id] = document.getElementById(item.id).checked;
+            });
+
+            localStorage.setItem('checklistAbertura', JSON.stringify(dados));
+            status('✅ Salvo!', 'success');
+        }
+
+        function carregar() {
+            const salvos = localStorage.getItem('checklistAbertura');
+            if (salvos) {
+                const d = JSON.parse(salvos);
+                if (d.resp) document.getElementById('responsavel').value = d.resp;
+                if (d.data) document.getElementById('data').value = d.data;
+                if (d.hora) document.getElementById('hora').value = d.hora;
+                if (d.itens) {
+                    Object.keys(d.itens).forEach(id => {
+                        const cb = document.getElementById(id);
+                        if (cb) cb.checked = d.itens[id];
+                    });
+                }
+            }
+        }
+
+        function resetar() {
+            if (!confirm('Resetar?')) return;
+            localStorage.removeItem('checklistAbertura');
+            document.getElementById('responsavel').value = '';
+            atualizarDateTime();
+            itensChecklist.forEach(item => document.getElementById(item.id).checked = false);
+            atualizarProgresso();
+            status('🔄 Resetado!', 'success');
+        }
+
+        function status(msg, type) {
+            const el = document.getElementById('statusMessage');
+            el.textContent = msg;
+            el.className = 'status-message ' + type;
+            setTimeout(() => el.className = 'status-message', 3000);
+        }
+
+        function gerarPDF() {
+            if (!document.getElementById('responsavel').value.trim()) {
+                status('Informe o responsável.', 'error');
+                return;
+            }
+            window.print();
+        }
+
+        function getTexto() {
+            const resp = document.getElementById('responsavel').value.trim();
+            const data = document.getElementById('data').value;
+            const hora = document.getElementById('hora').value;
+            let txt = `📋 *CHECKLIST ABERTURA*
+👤 ${resp}
+📅 ${data} ⏰ ${hora}
+
+`;
+            let count = 0;
+            itensChecklist.forEach(item => {
+                const ok = document.getElementById(item.id).checked;
+                txt += (ok ? '✅' : '⬜') + ' ' + item.label + '
+';
+                if (ok) count++;
+            });
+            txt += `
+📊 ${count}/12 verificados`;
+            return txt;
+        }
+
+        function compartilhar() {
+            if (!document.getElementById('responsavel').value.trim()) {
+                status('Informe o responsável.', 'error');
+                return;
+            }
+            if (navigator.share) {
+                navigator.share({ title: 'CheckList', text: getTexto() })
+                    .then(() => status('✅ Compartilhado!', 'success'));
+            } else {
+                status('Use WhatsApp ou SMS abaixo.', 'success');
+            }
+        }
+
+        function whatsapp() {
+            if (!document.getElementById('responsavel').value.trim()) {
+                status('Informe o responsável.', 'error');
+                return;
+            }
+            const url = 'whatsapp://send?text=' + encodeURIComponent(getTexto());
+            window.open(url, '_blank');
+            status('📱 Abrindo WhatsApp...', 'success');
+        }
+
+        function sms() {
+            if (!document.getElementById('responsavel').value.trim()) {
+                status('Informe o responsável.', 'error');
+                return;
+            }
+            const ua = navigator.userAgent.toLowerCase();
+            const url = ua.indexOf('iphone') > -1 
+                ? 'sms:&body=' + encodeURIComponent(getTexto())
+                : 'sms:?body=' + encodeURIComponent(getTexto());
+            window.open(url, '_blank');
+            status('📱 Abrindo SMS...', 'success');
+        }
+
+        document.addEventListener('DOMContentLoaded', inicializar);
+        setInterval(() => {
+            if (document.getElementById('responsavel').value.trim()) salvar();
+        }, 30000);
+
+        // Registro do Service Worker para PWA instalável
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW registrado:', reg.scope))
+                    .catch(err => console.warn('SW falhou:', err));
+            });
+        }
+
+        // Prompt de instalação automática (Android/Chrome)
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) {
+                installBtn.style.display = 'flex';
+                installBtn.addEventListener('click', async () => {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        installBtn.style.display = 'none';
+                        status('✅ App instalado com sucesso!', 'success');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            status('✅ App instalado com sucesso!', 'success');
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) installBtn.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
